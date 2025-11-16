@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ContactForm
 from django.core.paginator import Paginator
 from .models import Contact, Medicine, Pharmacy, PharmacyStock
+import google.generativeai as genai
+from django.shortcuts import render
+import re
 
 def home(request):
     return render(request, 'contacts/home.html')
@@ -93,43 +96,77 @@ def medicine_detail(request, id):
         "medicine": medicine,
         "stock_entries": stock_entries
     })
-def assistant(request):
-    message = ""
-    response = ""
-    medicines = []
 
-    SYMPTOM_MAP = {
-        "headache": ["Panadol", "Advil", "Acamol"],
-        "fever": ["Panadol", "Panadol Extra"],
-        "flu": ["Panadol Cold & Flu", "Actifed", "Otrivin"],
-        "cold": ["Actifed", "Otrivin", "Panadol Cold & Flu"],
-        "allergy": ["Claritin", "Zyrtec"],
-        "heartburn": ["Gaviscon", "Nexium", "Buscopan"],
-        "acidity": ["Gaviscon", "Nexium", "Buscopan"],
-        "stomach pain": ["Buscopan"],
-        "infection": ["Augmentin", "Cipro", "Zithromax"],
-        "antibiotic": ["Augmentin", "Cipro", "Zithromax"],
-        "skin rash": ["Bepanthen", "Betadine"],
-        "rash": ["Bepanthen", "Betadine"],
-    }
+
+
+
+def extract_medicine_names(text):
+    # Finds capitalized words (Panadol, Brufen, Gaviscon)
+    return re.findall(r"[A-Z][a-zA-Z0-9+-]{2,}", text)
+
+
+
+def assistant(request):
+    response_text = ""
+    short_expl = ""
+    meds = ""
+    doctor = ""
+    message = ""
+    available_medicines = []
 
     if request.method == "POST":
-        message = request.POST.get("message", "").lower()
+        message = request.POST.get("message", "")
 
-        matched = None
-        for symptom, meds in SYMPTOM_MAP.items():
-            if symptom in message:
-                matched = meds
-                break
+        prompt = f"""
+        dont use * replace it with - for lists
+        Give a medical summary in EXACTLY this format:
 
-        if matched:
-            response = "These medicines may help based on your symptoms:"
-            medicines = Medicine.objects.filter(name__in=matched)
-        else:
-            response = "No matching symptoms found. Try describing your issue differently."
+        1. Short explanation: <one sentence>
+        2. Recommended OTC medicines:<list with dashes> Recommend specific over-the-counter medicines available in Lebanon,
+           include BRAND NAMES like Panadol, Brufen, Buscopan, Gaviscon, Strepsils, Telfast, Claritin, Otrivin, Efferalgan, Imodium.
+        3. When to see a doctor: <list with dashes>
+
+        Use REAL line breaks.
+        Symptoms: {message}
+        """
+
+        genai.configure(api_key="AIzaSyDybJxbjtGEbYSh7QTf9yvY0laSRY9bPNw")
+        model = genai.GenerativeModel("models/gemini-2.0-flash")
+
+        try:
+            ai = model.generate_content(prompt)
+            response_text = ai.text
+
+            # ---- SPLIT INTO 3 PARTS ----
+            parts = response_text.split("2. Recommended")
+            part1 = parts[0] if len(parts) > 0 else ""
+            rest = "2. Recommended" + parts[1] if len(parts) > 1 else ""
+
+            parts2 = rest.split("3. When")
+            part2 = parts2[0] if len(parts2) > 0 else ""
+            part3 = "3. When" + parts2[1] if len(parts2) > 1 else ""
+
+            short_expl = part1.replace("1. Short explanation:", "").strip()
+            meds = part2.replace("2. Recommended OTC medicines:", "").strip()
+            doctor = part3.replace("3. When to see a doctor:", "").strip()
+
+            # ---- EXTRACT MEDICINE NAMES FROM AI RESPONSE ----
+            medicine_names = extract_medicine_names(response_text)
+
+            if medicine_names:
+                # Match ANY medicine name found
+                regex = "|".join(medicine_names)
+                available_medicines = Medicine.objects.filter(
+                    name__iregex=regex
+                )
+
+        except Exception as e:
+            response_text = f"Error: {e}"
 
     return render(request, "contacts/assistant.html", {
+        "short": short_expl,
+        "meds": meds,
+        "doctor": doctor,
         "message": message,
-        "response": response,
-        "medicines": medicines
+        "available_medicines": available_medicines,
     })
