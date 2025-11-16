@@ -22,64 +22,47 @@
 <div class="row">
     {% for c in page_obj %}
         <div class="col-md-4 mb-4">
-        <a href="{% url 'contact_detail' c.id %}" class="text-decoration-none text-dark">
-            <div class="card shadow-sm border-0 text-center py-3">
+            <a href="{% url 'contact_detail' c.id %}" class="text-decoration-none text-dark">
+                <div class="card shadow-sm border-0 p-4"
+                     style="border-radius: 20px; transition: 0.15s ease-in-out;">
 
-                {% if c.profile_photo %}
-                    <img src="{{ c.profile_photo.url }}"
-                        alt="Doctor Photo"
-                        class="rounded-circle mx-auto d-block shadow-sm"
-                        style="width:120px; height:120px; object-fit:cover; border:3px solid #0ca678;">
-                {% else %}
-                    <img src="{% static 'defaults/default_doctor.jpg' %}"
-                        alt="Doctor Photo"
-                        class="rounded-circle mx-auto d-block shadow-sm"
-                        style="width:120px; height:120px; object-fit:cover; border:3px solid #0ca678;">
-                {% endif %}
+                    <div class="text-center">
+                        {% if c.profile_photo %}
+                            <img src="{{ c.profile_photo.url }}"
+                                 class="rounded-circle shadow-sm"
+                                 style="width:120px; height:120px; object-fit:cover;">
+                        {% else %}
+                            <img src="{% static 'defaults/default_doctor.jpg' %}"
+                                 class="rounded-circle shadow-sm"
+                                 style="width:120px; height:120px; object-fit:cover;">
+                        {% endif %}
+                    </div>
 
-                <div class="card-body">
+                    <h5 class="text-center mt-3 fw-bold">{{ c.name }}</h5>
 
-                    <h5 class="card-title fw-bold">{{ c.name }}</h5>
+                    <p class="text-center text-muted mb-1">{{ c.speciality }}</p>
 
-                    <p class="text-muted mb-1">
-                        <i class="bi bi-heart-pulse"></i> {{ c.speciality }}
-                    </p>
-
-                    <p class="mb-1">
+                    <p class="text-center mb-0">
                         <i class="bi bi-geo-alt"></i> {{ c.city }}
                     </p>
 
-                    <p class="mb-1">
+                    <p class="text-center">
                         <i class="bi bi-hospital"></i> {{ c.hospital }}
                     </p>
 
-                    <p class="mb-2">
-                        <i class="bi bi-cash-coin"></i> <strong>${{ c.fees }}</strong>
-                    </p>
-
-                    <p class="mb-3">
-                        ☆ Rating: {{ c.rating }}
-                    </p>
-
-                    {% if user.is_superuser %}
-                    <div class="d-flex justify-content-center">
-                        <a href="{% url 'contact_update' c.id %}" class="btn btn-warning btn-sm me-2">
-                            <i class="bi bi-pencil-square"></i> Edit
-                        </a>
-
-                        <a href="{% url 'contact_delete' c.id %}" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash"></i> Delete
-                        </a>
-                    </div>
-                    {% endif %}
-
                 </div>
-
-            </div>
-        </a>
-    </div>
+            </a>
+        </div>
     {% endfor %}
 </div>
+
+<style>
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+</style>
+
 
 
 <div class="d-flex justify-content-center mt-4">

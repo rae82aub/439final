@@ -1,89 +1,78 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
 {% block content %}
 <div class="container mt-5">
 
-    <div class="card shadow-lg border-0 p-4" 
-         style="border-radius: 20px; max-width: 750px; margin: auto;">
+    <div class="card shadow-lg border-0 p-5"
+         style="border-radius: 25px; max-width: 800px; margin:auto;">
 
+        <!-- Profile Photo -->
         <div class="text-center">
             {% if doctor.profile_photo %}
                 <img src="{{ doctor.profile_photo.url }}"
                      class="rounded-circle shadow"
-                     style="width:150px; height:150px; object-fit:cover; border:4px solid #0ca678;">
+                     style="width:150px; height:150px; object-fit:cover;">
             {% else %}
                 <img src="{% static 'defaults/default_doctor.jpg' %}"
                      class="rounded-circle shadow"
-                     style="width:150px; height:150px; object-fit:cover; border:4px solid #0ca678;">
+                     style="width:150px; height:150px; object-fit:cover;">
             {% endif %}
         </div>
 
+        <!-- Name + Specialty -->
         <h2 class="text-center mt-3 fw-bold">{{ doctor.name }}</h2>
+        <p class="text-center text-muted" style="font-size:18px;">
+            {{ doctor.speciality }}
+        </p>
 
-        <div class="text-center mb-3">
-            <span class="badge"
-                  style="background-color:#0ca678; font-size:14px; padding:8px 14px;">
-                {{ doctor.speciality }}
-            </span>
-        </div>
+        <hr class="my-4">
 
-        <div class="px-4">
+        <!-- ALL Doctor Info -->
+        <div class="px-3">
 
-            <p>
-                <i class="bi bi-hospital"></i>
-                <strong>Hospital:</strong> {{ doctor.hospital }}
-            </p>
+            <p><strong>City:</strong> {{ doctor.city }}</p>
+            <p><strong>Hospital:</strong> {{ doctor.hospital }}</p>
 
-            <p>
-                <i class="bi bi-geo-alt"></i>
-                <strong>City:</strong> {{ doctor.city }}
-            </p>
+            {% if doctor.fees %}
+            <p><strong>Fees:</strong> ${{ doctor.fees }}</p>
+            {% endif %}
 
-            <p>
-                <i class="bi bi-cash-coin"></i>
-                <strong>Fees:</strong> ${{ doctor.fees }}
-            </p>
+            {% if doctor.rating %}
+            <p><strong>Rating:</strong> {{ doctor.rating }}</p>
+            {% endif %}
 
-            <p>
-                <i class="bi bi-star-fill text-warning"></i>
-                <strong>Rating:</strong> {{ doctor.rating }}
-            </p>
-        </div>
-
-        <hr>
-
-        <h4 class="text-center fw-bold mb-3">Contact</h4>
-
-        <div class="text-center mb-4">
             {% if doctor.phone %}
-            <p style="font-size:18px;">
-                <i class="bi bi-telephone-fill text-primary"></i>
-                <strong>{{ doctor.phone }}</strong>
-            </p>
-            {% else %}
-            <p class="text-muted">Phone number not available</p>
+            <p><strong>Phone:</strong> {{ doctor.phone }}</p>
+            {% endif %}
+
+            {% if doctor.description %}
+            <p><strong>Biography:</strong> {{ doctor.description }}</p>
             {% endif %}
         </div>
 
-        <div class="text-center mb-4">
-            <a href="#" 
-               class="btn btn-success px-5 py-2"
-               style="border-radius: 10px; font-size:18px;">
-               Book Appointment
-            </a>
-        </div>
+        <hr class="my-4">
 
-        <hr>
+        <!-- Edit / Delete (Only Admin) -->
+        {% if user.is_superuser %}
+        <div class="d-flex justify-content-center gap-3 mb-4">
+            <a href="{% url 'contact_update' doctor.id %}" 
+               class="btn btn-warning px-4">Edit</a>
+
+            <a href="{% url 'contact_delete' doctor.id %}" 
+               class="btn btn-danger px-4">Delete</a>
+        </div>
+        {% endif %}
 
         <div class="text-center">
-            <a href="{% url 'contact_list' %}" 
-               class="btn btn-secondary px-5 py-2"
+            <a href="{% url 'contact_list' %}"
+               class="btn btn-secondary px-4"
                style="border-radius: 10px;">
                ← Back to Doctors
             </a>
         </div>
 
     </div>
+
 </div>
 {% endblock %}
