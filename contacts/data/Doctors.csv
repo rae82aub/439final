@@ -1,0 +1,41 @@
+name,speciality,city,hospital,experience,fees,rating
+Dr. Abdallah Rebeiz,Cardiologist,Beirut,AUBMC,22,100,4.83
+Dr. Fadi Sawaya,Cardiologist,Beirut,AUBMC,12,50,4.91
+Dr. Samia Khoury,Neurologist,Beirut,AUBMC,21,120,4.98
+Dr. Dany Abi Gerges,Oncologist,Beirut,Rizk,29,65,4.87
+Dr. Adel Akl,Psychiatrist,Beirut,Rizk,28,70,4.78
+Dr. Georges Al Hajj,General Surgeon,Beirut,Rizk,25,70,4.98
+Dr. Adnan Awdeh,General Surgeon,Beirut,Rizk,31,65,4.88
+Dr. Rania Bassil,Pediatric Cardiologist,Beirut,Rizk,20,50,4.77
+Dr. Roger Bitar,Gynecologist,Beirut,Rizk,28,100,4.86
+Dr. Yehya Boustany,Dermatologist,Beirut,Rizk,21,80,4.76
+Dr. Nicolas Chami,Plastic Surgeon,Beirut,Rizk,16,90,4.65
+Dr. Rachel El Asmar,Family Medecine,Beirut,Rizk,9,65,4.79
+Dr. Alexandre Nehme,Orthopedian,Beirut,Saint George,8,70,4.66
+Dr. Antoine Challita,Family Medecine,Beirut,Saint George,10,75,4.56
+Dr. Aziz Najjar,Urologist,Beirut,Saint George,7,55,4.92
+Dr. Carol Saba,Pediatrician,Beirut,Saint George,6,70,5
+Dr. Elias Fiani,Gastroenterologist,Beirut,Saint George,10,75,4.99
+Dr. Khalil Bedran,Gastroenterologist,Beirut,Saint George,23,70,4.96
+Dr. Marie Choucair,Pediatrician,Beirut,Saint George,9,85,4.87
+Dr. Amir Abdelnour,General Surgeon,Beirut,Saint George,12,90,4.84
+Dr. Melissa Kyriakos,General Surgeon,Beirut,Saint George,7,80,4.93
+Dr. Edgard Nasr,Nephrologist,Beirut,Saint George,21,90,4.91
+Dr. Valérie Hage,Nephrologist,Beirut,Saint George,8,75,4.95
+Dr. Elie Karam,Psychiatrist,Beirut,Saint George,23,80,4.64
+Dr. Imad Ghantous,Urologist,Beirut,Saint George,22,100,4.98
+Dr. Rayane Feghaly,Dermatologist,Beirut,Geitaoui,12,100,4.76
+Dr. Elie Maurice Ballan,Dermatologist,Beirut,Geitaoui,20,110,4.98
+Dr. Righab Hamdan,Cardiologist,Beirut,Geitaoui,11,80,4.92
+Dr. Wajdi Haddad,Cardiologist,Beirut,Geitaoui,14,75,4.73
+Dr. Gilbert Abou Nader,Cardiologist,Beirut,Geitaoui,12,95,4.87
+Dr. Abdallah Rahbani,Neurologist,Beirut,Geitaoui,16,75,4.37
+Dr. Perla Matta,Pediatrician,Beirut,Geitaoui,9,85,4.83
+Dr. Ayman Jaber,Cardiologist,Hazmieh,Mount Lebanon,8,70,4.98
+Dr. Salam Jurdy,Cardiologist,Hazmieh,Mount Lebanon,10,75,4.97
+Dr. Fady Zaarour,Family Medicine,Hazmieh,Mount Lebanon,12,65,4.86
+Dr. Raymond Bejjani,Urologist,Hazmieh,Mount Lebanon,15,55,4.81
+Dr. Carmen Kassab,Gastroenterologist,Hazmieh,Mount Lebanon,17,85,4.56
+Dr. Noha Hachem,Gastroenterologist,Hazmieh,Mount Lebanon,9,105,4.93
+Dr. Mario Njeim,Cardiologist,Beirut,Hotel Dieu,11,100,4.85
+Dr. Gabrielle Macaron,Neurologist,Beirut,Hotel Dieu,7,90,4.91

@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Doctors</h2>
+
+    <div>
+        {% if user.is_superuser %}
+        <a href="{% url 'contact_add' %}" class="btn btn-primary me-2">
+            <i class="bi bi-plus-circle"></i> Add Doctor
+        </a>
+        {% endif %}
+
+        <a href="{% url 'recommend' %}" class="btn btn-success">
+            <i class="bi bi-search-heart"></i> Recommendation Engine
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    {% for c in page_obj %}
+        <div class="col-md-4 mb-4">
+        <a href="{% url 'contact_detail' c.id %}" class="text-decoration-none text-dark">
+            <div class="card shadow-sm border-0 text-center py-3">
+
+                {% if c.profile_photo %}
+                    <img src="{{ c.profile_photo.url }}"
+                        alt="Doctor Photo"
+                        class="rounded-circle mx-auto d-block shadow-sm"
+                        style="width:120px; height:120px; object-fit:cover; border:3px solid #0ca678;">
+                {% else %}
+                    <img src="{% static 'defaults/default_doctor.jpg' %}"
+                        alt="Doctor Photo"
+                        class="rounded-circle mx-auto d-block shadow-sm"
+                        style="width:120px; height:120px; object-fit:cover; border:3px solid #0ca678;">
+                {% endif %}
+
+                <div class="card-body">
+
+                    <h5 class="card-title fw-bold">{{ c.name }}</h5>
+
+                    <p class="text-muted mb-1">
+                        <i class="bi bi-heart-pulse"></i> {{ c.speciality }}
+                    </p>
+
+                    <p class="mb-1">
+                        <i class="bi bi-geo-alt"></i> {{ c.city }}
+                    </p>
+
+                    <p class="mb-1">
+                        <i class="bi bi-hospital"></i> {{ c.hospital }}
+                    </p>
+
+                    <p class="mb-2">
+                        <i class="bi bi-cash-coin"></i> <strong>${{ c.fees }}</strong>
+                    </p>
+
+                    <p class="mb-3">
+                        ☆ Rating: {{ c.rating }}
+                    </p>
+
+                    {% if user.is_superuser %}
+                    <div class="d-flex justify-content-center">
+                        <a href="{% url 'contact_update' c.id %}" class="btn btn-warning btn-sm me-2">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+
+                        <a href="{% url 'contact_delete' c.id %}" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+
+<div class="d-flex justify-content-center mt-4">
+    <nav>
+        <ul class="pagination">
+
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+</div>
+
+{% endblock %}

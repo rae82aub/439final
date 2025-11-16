@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container py-5">
+    <h1 class="fw-bold text-center mb-4">
+        Medicine Assistant
+    </h1>
+
+    <form method="POST" class="card p-4 shadow-sm mx-auto" style="max-width: 600px;">
+        {% csrf_token %}
+        <label class="form-label fw-semibold">Describe your symptoms:</label>
+        <textarea name="message" class="form-control" rows="3" placeholder="e.g. I have stomach acidity">{{ message }}</textarea>
+
+        <button class="btn btn-success mt-3 w-100">Ask</button>
+    </form>
+
+    {% if response %}
+    <div class="card shadow-sm p-4 mt-4 mx-auto" style="max-width: 600px;">
+        <h4 class="fw-bold">Recommended Medicines</h4>
+        <p>{{ response }}</p>
+
+        {% if medicines %}
+        <hr>
+        <h5 class="fw-bold">Available Medicines</h5>
+        <ul>
+            {% for m in medicines %}
+                <li>{{ m.name }} - {{ m.get_category_display }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <p class="text-muted small text-center mt-4">
+        ⚠️ This tool is for informational purposes only and does not replace professional medical advice.
+    </p>
+</div>
+
+{% endblock %}

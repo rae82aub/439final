@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="card shadow-sm p-5 mb-4">
+        <h1 class="fw-bold">{{ medicine.name }}</h1>
+
+        {% if medicine.description %}
+            <p class="text-muted">{{ medicine.description }}</p>
+        {% endif %}
+
+        <p><strong>Category:</strong> {{ medicine.get_category_display }}</p>
+
+        {% if medicine.manufacturer %}
+            <p><strong>Manufacturer:</strong> {{ medicine.manufacturer }}</p>
+        {% endif %}
+
+        {% if medicine.price %}
+            <p><strong>Base Price:</strong> ${{ medicine.price }}</p>
+        {% endif %}
+    </div>
+
+    <h3 class="fw-bold mb-3 text-center">Available At These Pharmacies</h3>
+
+    <div class="row">
+        {% for entry in stock_entries %}
+            <div class="col-md-4 mb-4">
+                <div class="card p-4 shadow-sm">
+                    <h4 class="fw-bold">{{ entry.pharmacy.name }}</h4>
+
+                    <p class="text-muted small">{{ entry.pharmacy.city }}</p>
+
+                    {% if entry.pharmacy.address %}
+                        <p><strong>Address:</strong> {{ entry.pharmacy.address }}</p>
+                    {% endif %}
+
+                    <p><strong>Price:</strong> ${{ entry.price }}</p>
+
+                    {% if entry.in_stock %}
+                        <span class="badge bg-success">In Stock</span>
+                    {% else %}
+                        <span class="badge bg-danger">Out of Stock</span>
+                    {% endif %}
+
+                    <hr>
+
+                    {% if entry.pharmacy.phone %}
+                        <a href="tel:{{ entry.pharmacy.phone }}" class="btn btn-success w-100 mb-2">
+                            Call Pharmacy
+                        </a>
+                    {% endif %}
+
+                    {% if entry.pharmacy.map_link %}
+                        <a href="{{ entry.pharmacy.map_link }}" target="_blank" class="btn btn-outline-success w-100">
+                            Open in Google Maps
+                        </a>
+                    {% endif %}
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if stock_entries|length == 0 %}
+        <p class="text-center text-muted mt-4">No pharmacies currently have this medicine.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+        <h1 class="fw-bold mb-3">
+            <i class="bi bi-capsule text-success"></i>
+            Find Your Medicine
+        </h1>
+        <p class="text-muted">Search for any medicine by name or browse by category.</p>
+    </div>
+
+    <div class="d-flex justify-content-center flex-wrap gap-2 mt-4 mb-4">
+
+        <a href="?category=all" class="btn btn-outline-success btn-sm {% if selected_category == 'all' %}active{% endif %}">
+            All
+        </a>
+        <a href="?category=painkiller" class="btn btn-outline-success btn-sm {% if selected_category == 'painkiller' %}active{% endif %}">
+            Painkillers
+        </a>
+        <a href="?category=antibiotic" class="btn btn-outline-success btn-sm {% if selected_category == 'antibiotic' %}active{% endif %}">
+            Antibiotics
+        </a>
+        <a href="?category=cold_flu" class="btn btn-outline-success btn-sm {% if selected_category == 'cold_flu' %}active{% endif %}">
+            Cold & Flu
+        </a>
+        <a href="?category=digestive" class="btn btn-outline-success btn-sm {% if selected_category == 'digestive' %}active{% endif %}">
+            Digestive
+        </a>
+        <a href="?category=allergy" class="btn btn-outline-success btn-sm {% if selected_category == 'allergy' %}active{% endif %}">
+            Allergy Relief
+        </a>
+        <a href="?category=vitamin" class="btn btn-outline-success btn-sm {% if selected_category == 'vitamin' %}active{% endif %}">
+            Vitamins
+        </a>
+        <a href="?category=heart" class="btn btn-outline-success btn-sm {% if selected_category == 'heart' %}active{% endif %}">
+            Heart
+        </a>
+        <a href="?category=skin" class="btn btn-outline-success btn-sm {% if selected_category == 'skin' %}active{% endif %}">
+            Skin / Topical
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm p-4 mx-auto" style="max-width: 700px;">
+        <form method="GET" class="mb-4">
+
+            <div class="input-group input-group-lg mb-3">
+                <span class="input-group-text bg-success text-white">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="form-control"
+                    placeholder="Enter medicine name..."
+                    value="{{ query }}"
+                >
+
+                <button class="btn btn-success px-4" type="submit">Search</button>
+            </div>
+
+        </form>
+    </div>
+
+    {% if results %}
+        <h3 class="text-center mt-5 fw-bold">Results</h3>
+
+        <div class="row mt-4">
+            {% for med in results %}
+                <div class="col-md-4 mb-4">
+
+                    <a href="{% url 'medicine_detail' med.id %}" class="text-decoration-none text-dark">
+
+                        <div class="card border-0 shadow-sm p-4 medicine-card hover-card">
+
+                            {% if med.image %}
+                                <img src="{{ med.image.url }}" class="img-fluid rounded mb-2" style="max-height: 120px;">
+                            {% endif %}
+
+                            <h4 class="fw-bold mb-2">{{ med.name }}</h4>
+
+                            {% if med.description %}
+                                <p class="text-muted small">{{ med.description|truncatewords:12 }}</p>
+                            {% endif %}
+
+                            {% if med.manufacturer %}
+                                <p class="mb-1"><strong>Manufacturer:</strong> {{ med.manufacturer }}</p>
+                            {% endif %}
+
+                            {% if med.price %}
+                                <p class="mb-1"><strong>Price:</strong> ${{ med.price }}</p>
+                            {% endif %}
+
+                            {% if med.category %}
+                                <span class="badge rounded-pill bg-success-subtle text-success fw-semibold mt-2">
+                                    {{ med.get_category_display }}
+                                </span>
+                            {% endif %}
+
+                        </div>
+                    </a>
+
+                </div>
+            {% endfor %}
+        </div>
+
+    {% elif query or selected_category %}
+        <p class="text-center text-muted mt-5">
+            No medicines found.
+        </p>
+    {% endif %}
+
+</div>
+
+<style>
+.hover-card:hover {
+    transform: translateY(-5px);
+    transition: 0.2s ease;
+}
+</style>
+
+{% endblock %}

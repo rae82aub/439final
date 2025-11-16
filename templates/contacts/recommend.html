@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<h2 class="fw-bold mb-4">Recommendation Engine</h2>
+
+<div class="card shadow-sm p-4 mb-4" style="border-left:6px solid #0ca678;">
+    <form method="get">
+        <div class="row g-3">
+
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-heart-pulse-fill text-danger"></i> Speciality
+                </label>
+                <select name="speciality" class="form-select">
+                    <option value="">All Specialties</option>
+                    {% for s in specialties %}
+                        <option value="{{ s }}" {% if request.GET.speciality == s %}selected{% endif %}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-geo-alt" style="color:#0ca678;"></i> City
+                </label>
+                <select name="city" class="form-select">
+                    <option value="">All Cities</option>
+                    {% for c in cities %}
+                        <option value="{{ c }}" {% if request.GET.city == c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-cash-coin text-success"></i> Maximum Fee
+                </label>
+                <input type="number" name="max_fee"
+                       class="form-control"
+                       placeholder="e.g. 100"
+                       value="{{ request.GET.max_fee }}">
+            </div>
+
+            <div class="col-12 mt-2">
+                <button class="btn btn-success px-4">
+                    <i class="bi bi-search-heart"></i> Search
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<h4 class="fw-bold mb-3">Results</h4>
+
+{% if results %}
+<div class="row g-4">
+    {% for c in results %}
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0" style="border-radius:12px; overflow:hidden;">
+
+            {% if c.profile_photo %}
+            <div class="text-center mt-3">
+                {% if c.profile_photo %}
+                    <img src="{{ c.profile_photo.url }}"
+                        class="rounded-circle shadow-sm"
+                        style="width:120px; height:120px; object-fit:cover; border:3px solid #0ca678;">
+                {% else %}
+                    <img src="{% static 'defaults/default_doctor.jpg' %}"
+                        class="rounded-circle shadow-sm"
+                        style="width:120px; height:120px; object-fit:cover; border:3px solid #0ca678;">
+                {% endif %}
+            </div>
+
+            {% else %}
+            <img src="{% static 'defaults/default_doctor.jpg' %}"
+                 class="card-img-top"
+                 style="height:160px; object-fit:cover;">
+            {% endif %}
+
+            <div class="card-body">
+
+                <h5 class="fw-bold mb-1">
+                    {{ c.name }}
+                    {% if c.rating > 4.8 %}
+                        <span class="badge" style="background:#8A0E31; color:#D1CE52;">★ Top Rated</span>
+                    {% endif %}
+                </h5>
+
+                <p class="mb-1 text-muted"><i class="bi bi-heart-pulse"></i> {{ c.speciality }}</p>
+                <p class="mb-1"><i class="bi bi-hospital"></i> {{ c.hospital }}</p>
+                <p class="mb-1"><i class="bi bi-geo-alt"></i> {{ c.city }}</p>
+
+                <p class="mt-2 mb-1 fw-bold">
+                    <i class="bi bi-cash-coin"></i> ${{ c.fees }}
+                </p>
+
+                <span class="badge" style="background:#0ca678;">
+                    ⭐ {{ c.rating }}
+                </span>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<p class="text-muted mt-3">No doctors match your filters.</p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,46 @@
+:root {
+    --primary: #009688;
+    --secondary: #4db6ac;
+    --bg: #eefaf7;
+    --card-bg: white;
+}
+
+body {
+    background-color: var(--bg);
+}
+
+.navbar {
+    background-color: var(--primary) !important;
+}
+
+.btn-primary {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+.btn-success {
+    background-color: var(--secondary) !important;
+    border-color: var(--secondary) !important;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.custom-header th {
+    background-color: #008080 !important; 
+    color: white !important;
+    font-weight: 600;
+    text-align: left;
+}
+.card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.card:hover {
+    transform: translateY(-6px) !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+}
