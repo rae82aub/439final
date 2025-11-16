@@ -1,0 +1,82 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up | MedApp</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #f5f7f8;
+        }
+        .signup-card {
+            max-width: 410px;
+            margin: auto;
+            margin-top: 80px;
+            border-radius: 15px;
+            padding: 35px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .btn-medapp {
+            background-color: #009688;
+            color: white;
+            font-weight: 600;
+        }
+        .btn-medapp:hover {
+            background-color: #00796b;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="signup-card bg-white">
+    <h3 class="text-center fw-bold mb-4" style="color:#009688;">
+        <i class="bi bi-person-plus-fill me-1"></i> Create Account
+    </h3>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Username</label>
+            <input type="text" name="username" class="form-control" placeholder="Choose a username" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Email</label>
+            <input type="email" name="email" class="form-control" placeholder="you@example.com" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Password</label>
+            <input type="password" name="password1" class="form-control" placeholder="Create a password" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Confirm Password</label>
+            <input type="password" name="password2" class="form-control" placeholder="Re-enter password" required>
+        </div>
+
+        {% if form.errors %}
+            <div class="alert alert-danger small">
+                {{ form.errors }}
+            </div>
+        {% endif %}
+
+        <button class="btn btn-medapp w-100 mt-2" type="submit">Sign Up</button>
+    </form>
+
+    <p class="text-center mt-3 small">
+        Already have an account?
+        <a href="{% url 'login' %}" style="color:#009688;">Log in</a>
+    </p>
+</div>
+
+</body>
+</html>

@@ -3,12 +3,18 @@ from .forms import ContactForm
 from django.core.paginator import Paginator
 from .models import Contact, Medicine, Pharmacy, PharmacyStock
 import google.generativeai as genai
-from django.shortcuts import render
 import re
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+
+
 
 def home(request):
-    return render(request, 'contacts/home.html')
+    return render(request, "home.html")
 
+@login_required
 def contact_list(request):
     contacts = Contact.objects.all().order_by("name")
 
@@ -20,7 +26,7 @@ def contact_list(request):
         'page_obj': page_obj
     })
 
-
+@login_required
 def contact_add(request):
     form = ContactForm(request.POST or None)
     if form.is_valid():
@@ -28,6 +34,8 @@ def contact_add(request):
         return redirect('contact_list')
     return render(request, 'contacts/contact_add.html', {'form': form})
 
+
+@login_required
 def contact_update(request, id):
     contact = get_object_or_404(Contact, id=id)
     form = ContactForm(request.POST or None, instance=contact)
@@ -36,11 +44,16 @@ def contact_update(request, id):
         return redirect('contact_list')
     return render(request, 'contacts/contact_update.html', {'form': form})
 
+
+@login_required
 def contact_delete(request, id):
     contact = get_object_or_404(Contact, id=id)
     contact.delete()
     return redirect('contact_list')
 
+
+
+@login_required
 def recommend(request):
     specialties = Contact.objects.values_list('speciality', flat=True).distinct()
     cities = Contact.objects.values_list('city', flat=True).distinct()
@@ -65,11 +78,13 @@ def recommend(request):
         'cities': cities,
         'results': results,
     })
-    
+
+@login_required   
 def contact_detail(request, id):
     doctor = get_object_or_404(Contact, id=id)
     return render(request, 'contacts/contact_detail.html', {'doctor': doctor})
 
+@login_required
 def find_medicine(request):
     query = request.GET.get("q", "")
     category = request.GET.get("category", "")
@@ -87,7 +102,7 @@ def find_medicine(request):
         "query": query,
         "selected_category": category
     })
-
+@login_required
 def medicine_detail(request, id):
     medicine = get_object_or_404(Medicine, id=id)
     stock_entries = PharmacyStock.objects.filter(medicine=medicine)
@@ -99,13 +114,13 @@ def medicine_detail(request, id):
 
 
 
-
+@login_required
 def extract_medicine_names(text):
     # Finds capitalized words (Panadol, Brufen, Gaviscon)
     return re.findall(r"[A-Z][a-zA-Z0-9+-]{2,}", text)
 
 
-
+@login_required
 def assistant(request):
     response_text = ""
     short_expl = ""
@@ -170,3 +185,47 @@ def assistant(request):
         "message": message,
         "available_medicines": available_medicines,
     })
+
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect("home")
+        else:
+            return render(request, "login.html", {"error": "Invalid username or password"})
+
+    return render(request, "login.html")
+
+
+
+def signup(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        email = request.POST["email"]
+        password1 = request.POST["password1"]
+        password2 = request.POST["password2"]
+
+        if password1 != password2:
+            return render(request, "signup.html", {"form": {"errors": "Passwords do not match"}})
+
+        if User.objects.filter(username=username).exists():
+            return render(request, "signup.html", {"form": {"errors": "Username already exists"}})
+
+        user = User.objects.create_user(username=username, email=email, password=password1)
+        login(request, user)
+        return redirect("home")
+
+    return render(request, "signup.html")
+
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("login")
+
