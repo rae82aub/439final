@@ -11,11 +11,14 @@ class ContactAdmin(ImportExportModelAdmin):
 
 
 @admin.register(Medicine)
-class MedicineAdmin(ImportExportModelAdmin):
-    list_display = ('name', 'manufacturer', 'price', 'category')
-    list_filter = ('category',)
-    search_fields = ('name', 'manufacturer')
-
+class MedicineAdmin(admin.ModelAdmin):
+    list_display = (
+        'name', 'category', 'price',
+        'pregnancy_safe', 'child_safe', 'minimum_age', 'requires_prescription'
+    )
+    list_filter = (
+        'category', 'pregnancy_safe', 'child_safe', 'requires_prescription'
+    )
 
 @admin.register(Pharmacy)
 class PharmacyAdmin(ImportExportModelAdmin):

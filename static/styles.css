@@ -44,3 +44,34 @@ body {
     transform: translateY(-6px) !important;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
 }
+/* REMOVE BROWSER DEFAULT STYLE */
+.custom-checkbox {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+
+    width: 18px;
+    height: 18px;
+
+    border: 2px solid #28a745 !important; 
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+    position: relative;
+}
+
+/* GREEN WHEN CHECKED */
+.custom-checkbox:checked {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+}
+
+/* WHITE CHECKMARK */
+.custom-checkbox:checked::after {
+    content: "✔";
+    color: white;
+    font-size: 13px;
+    position: absolute;
+    left: 2px;
+    top: -2px;
+    font-weight: bold;
+}

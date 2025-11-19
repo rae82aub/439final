@@ -85,7 +85,11 @@ class Medicine(models.Model):
     manufacturer = models.CharField(max_length=200, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, blank=True, null=True)
-
+   
+    pregnancy_safe = models.BooleanField(default=False)
+    child_safe = models.BooleanField(default=False)
+    minimum_age = models.IntegerField(default=0)
+    requires_prescription = models.BooleanField(default=False)
     def __str__(self):
         return self.name
 

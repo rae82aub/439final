@@ -16,57 +16,56 @@
         <button class="btn btn-success mt-3 w-100">Ask</button>
     </form>
 
-   {% if short or meds or doctor %}
-        <div class="row mt-4">
+   {% if short_points or meds_points or doctor_points %}
+<div class="row mt-4">
 
-            <!-- Short Explanation -->
-            <div class="col-md-12 mb-3">
-                <div class="card shadow-sm border-0 p-4">
-                    <h4 class="fw-bold text-success mb-3">Short Explanation</h4>
-                    <p class="mb-0">{{ short }}</p>
-                </div>
-            </div>
-
-        <!-- Recommended Medicines -->
-        <div class="col-md-12 mb-3">
-            <div class="card shadow-sm border-0 p-4">
-                <h4 class="fw-bold text-primary mb-3">Recommended Medicines</h4>
-
-                {% for line in meds.splitlines %}
-                    {% if line %}
-                        <div class="p-2 mb-2 rounded border bg-light">
-                            {{ line|safe }}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-
-                {% if available_medicines %}
-                <hr>
-                <h5 class="fw-bold text-dark mb-2">Available on MedApp</h5>
-                <div class="list-group">
-                    {% for med in available_medicines %}
-                        <a href="{% url 'medicine_detail' med.id %}"
-                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                            <span>{{ med.name }}</span>
-                            <small class="text-muted">{{ med.get_category_display }}</small>
-                        </a>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
+    <!-- Short Explanation -->
+    <div class="col-md-12 mb-3">
+        <div class="card shadow-sm border-0 p-4">
+            <h4 class="fw-bold text-success mb-3">Short Explanation</h4>
+            {% for point in short_points %}
+                <div class="p-2 mb-2 bg-light border rounded">{{ point }}</div>
+            {% endfor %}
         </div>
-
-
-        <!-- When to See a Doctor -->
-        <div class="col-md-12">
-            <div class="card shadow-sm border-0 p-4">
-                <h4 class="fw-bold text-danger mb-3">When to See a Doctor</h4>
-                <p class="mb-0">{{ doctor|linebreaks }}</p>
-            </div>
-        </div>
-
     </div>
-    {% endif %}
+
+    <!-- Recommended Medicines -->
+    <div class="col-md-12 mb-3">
+        <div class="card shadow-sm border-0 p-4">
+            <h4 class="fw-bold text-primary mb-3">Recommended Medicines</h4>
+            {% for point in meds_points %}
+                <div class="p-2 mb-2 bg-light border rounded">{{ point }}</div>
+            {% endfor %}
+
+            {% if available_medicines %}
+            <hr>
+            <h5 class="fw-bold text-dark mb-2">Available on MedApp</h5>
+            <div class="list-group">
+                {% for med in available_medicines %}
+                    <a href="{% url 'medicine_detail' med.id %}"
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>{{ med.name }}</span>
+                        <small class="text-muted">{{ med.get_category_display }}</small>
+                    </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- When to See a Doctor -->
+    <div class="col-md-12">
+        <div class="card shadow-sm border-0 p-4">
+            <h4 class="fw-bold text-danger mb-3">When to See a Doctor</h4>
+            {% for point in doctor_points %}
+                <div class="p-2 mb-2 bg-light border rounded">{{ point }}</div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endif %}
+
 
 
     <p class="text-muted small text-center mt-4">

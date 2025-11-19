@@ -20,6 +20,30 @@
             <p><strong>Base Price:</strong> ${{ medicine.price }}</p>
         {% endif %}
     </div>
+    
+    <h5 class="fw-bold mt-4">Safety Information</h5>
+    <div class="p-3 bg-light rounded border">
+        <!-- Pregnancy -->
+        {% if medicine.pregnancy_safe %}
+            <p>🟢 Safe during pregnancy</p>
+        {% else %}
+            <p>🔴 Not recommended during pregnancy</p>
+        {% endif %}
+
+        <!-- Children -->
+        {% if medicine.child_safe %}
+            <p>🟢 Safe for children (Minimum age: {{ medicine.minimum_age }} years)</p>
+        {% else %}
+            <p>🔴 Not recommended for children</p>
+        {% endif %}
+
+        <!-- Prescription -->
+        {% if medicine.requires_prescription %}
+            <p>🟠 Requires a doctor’s prescription</p>
+        {% else %}
+            <p>🟢 Over-the-counter</p>
+        {% endif %}
+    </div>
 
     <h3 class="fw-bold mb-3 text-center">Available At These Pharmacies</h3>
 

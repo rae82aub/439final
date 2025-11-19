@@ -89,19 +89,37 @@ def find_medicine(request):
     query = request.GET.get("q", "")
     category = request.GET.get("category", "")
 
+    # NEW FILTERS
+    pregnancy_safe = request.GET.get("pregnancy_safe")
+    child_safe = request.GET.get("child_safe")
+    otc = request.GET.get("otc")  # over-the-counter only
+
     medicines = Medicine.objects.all()
 
+    # TEXT SEARCH
     if query:
         medicines = medicines.filter(name__icontains=query)
 
+    # CATEGORY FILTER
     if category and category.lower() != "all":
         medicines = medicines.filter(category__iexact=category)
+
+    # SAFETY FILTERS
+    if pregnancy_safe == "on":
+        medicines = medicines.filter(pregnancy_safe=True)
+
+    if child_safe == "on":
+        medicines = medicines.filter(child_safe=True)
+
+    if otc == "on":
+        medicines = medicines.filter(requires_prescription=False)
 
     return render(request, "contacts/find_medicine.html", {
         "results": medicines,
         "query": query,
-        "selected_category": category
+        "selected_category": category,
     })
+
 @login_required
 def medicine_detail(request, id):
     medicine = get_object_or_404(Medicine, id=id)
@@ -119,73 +137,87 @@ def extract_medicine_names(text):
     # Finds capitalized words (Panadol, Brufen, Gaviscon)
     return re.findall(r"[A-Z][a-zA-Z0-9+-]{2,}", text)
 
-
 @login_required
 def assistant(request):
-    response_text = ""
-    short_expl = ""
-    meds = ""
-    doctor = ""
     message = ""
+    short_points = []
+    meds_points = []
+    doctor_points = []
     available_medicines = []
 
     if request.method == "POST":
         message = request.POST.get("message", "")
 
         prompt = f"""
-        dont use * replace it with - for lists
-        Give a medical summary in EXACTLY this format:
+        IMPORTANT: Use this exact format:
 
-        1. Short explanation: <one sentence>
-        2. Recommended OTC medicines:<list with dashes> Recommend specific over-the-counter medicines available in Lebanon,
-           include BRAND NAMES like Panadol, Brufen, Buscopan, Gaviscon, Strepsils, Telfast, Claritin, Otrivin, Efferalgan, Imodium.
-        3. When to see a doctor: <list with dashes>
+        1. Short explanation: <one or two sentences>
 
-        Use REAL line breaks.
+        2. Recommended OTC medicines:
+        - item
+        - item
+        - item
+
+        3. When to see a doctor:
+        - item
+        - item
+        - item
+
         Symptoms: {message}
         """
 
         genai.configure(api_key="AIzaSyDybJxbjtGEbYSh7QTf9yvY0laSRY9bPNw")
         model = genai.GenerativeModel("models/gemini-2.0-flash")
 
+        ai = model.generate_content(prompt)
+        response = ai.text
+
+        # ----------------------------
+        # SPLIT TOP-LEVEL SECTIONS
+        # ----------------------------
         try:
-            ai = model.generate_content(prompt)
-            response_text = ai.text
+            part1 = response.split("2.")[0]
+            part2to3 = response.split("2.")[1]
 
-            # ---- SPLIT INTO 3 PARTS ----
-            parts = response_text.split("2. Recommended")
-            part1 = parts[0] if len(parts) > 0 else ""
-            rest = "2. Recommended" + parts[1] if len(parts) > 1 else ""
+            part2 = part2to3.split("3.")[0]
+            part3 = part2to3.split("3.")[1]
+        except:
+            part1, part2, part3 = "", "", ""
 
-            parts2 = rest.split("3. When")
-            part2 = parts2[0] if len(parts2) > 0 else ""
-            part3 = "3. When" + parts2[1] if len(parts2) > 1 else ""
+        # ----------------------------
+        # CLEAN SECTIONS
+        # ----------------------------
+        short_clean = (
+            part1.replace("1. Short explanation:", "")
+            .replace("1. Short explanation", "")
+            .strip()
+        )
 
-            short_expl = part1.replace("1. Short explanation:", "").strip()
-            meds = part2.replace("2. Recommended OTC medicines:", "").strip()
-            doctor = part3.replace("3. When to see a doctor:", "").strip()
+        meds_clean = (
+            part2.replace("Recommended OTC medicines:", "")
+            .replace("2. Recommended OTC medicines:", "")
+            .strip()
+        )
 
-            # ---- EXTRACT MEDICINE NAMES FROM AI RESPONSE ----
-            medicine_names = extract_medicine_names(response_text)
+        doctor_clean = (
+            part3.replace("When to see a doctor:", "")
+            .replace("3. When to see a doctor:", "")
+            .strip()
+        )
 
-            if medicine_names:
-                # Match ANY medicine name found
-                regex = "|".join(medicine_names)
-                available_medicines = Medicine.objects.filter(
-                    name__iregex=regex
-                )
-
-        except Exception as e:
-            response_text = f"Error: {e}"
+        # ----------------------------
+        # SPLIT INTO BULLET POINTS
+        # ----------------------------
+        short_points = [p.strip() for p in short_clean.split("-") if p.strip()]
+        meds_points = [p.strip() for p in meds_clean.split("-") if p.strip()]
+        doctor_points = [p.strip() for p in doctor_clean.split("-") if p.strip()]
 
     return render(request, "contacts/assistant.html", {
-        "short": short_expl,
-        "meds": meds,
-        "doctor": doctor,
+        "short_points": short_points,
+        "meds_points": meds_points,
+        "doctor_points": doctor_points,
         "message": message,
-        "available_medicines": available_medicines,
     })
-
 
 def login_view(request):
     if request.method == "POST":
