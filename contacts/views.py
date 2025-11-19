@@ -8,6 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 
 
@@ -230,7 +231,8 @@ def login_view(request):
             login(request, user)
             return redirect("home")
         else:
-            return render(request, "login.html", {"error": "Invalid username or password"})
+            messages.error(request, "Invalid username or password")
+            return redirect("login")
 
     return render(request, "login.html")
 
@@ -244,16 +246,19 @@ def signup(request):
         password2 = request.POST["password2"]
 
         if password1 != password2:
-            return render(request, "signup.html", {"form": {"errors": "Passwords do not match"}})
+            messages.error(request, "Passwords do not match")
+            return redirect("signup")
 
         if User.objects.filter(username=username).exists():
-            return render(request, "signup.html", {"form": {"errors": "Username already exists"}})
+            messages.error(request, "Username already exists")
+            return redirect("signup")
 
         user = User.objects.create_user(username=username, email=email, password=password1)
         login(request, user)
         return redirect("home")
 
     return render(request, "signup.html")
+
 
 
 
