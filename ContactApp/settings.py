@@ -27,8 +27,11 @@ SECRET_KEY = "django-insecure-hl744r6isfa8_4ihqb2a^1(8t1bv%4_o&!g=8mz7zyoaz=i4y1
 DEBUG = True
 
 
-ALLOWED_HOSTS = ["medapp-web.azurewebsites.net"]
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "medapp-web-auayf9gnhbdgemh7.francecentral-01.azurewebsites.net"
+]STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 
 # Application definition
