@@ -1,6 +1,8 @@
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 from .models import Contact, Medicine, Pharmacy, PharmacyStock
+from .models import AppointmentRequest
+admin.site.register(AppointmentRequest)
 
 @admin.register(Contact)
 class ContactAdmin(ImportExportModelAdmin):
@@ -31,4 +33,3 @@ class PharmacyStockAdmin(ImportExportModelAdmin):
     list_display = ('medicine', 'pharmacy', 'price', 'in_stock')
     list_filter = ('pharmacy', 'medicine', 'in_stock')
     search_fields = ('medicine__name', 'pharmacy__name')
-

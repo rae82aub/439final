@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">My Appointments</h2>
+
+    {% if appointments %}
+        <div class="list-group">
+            {% for a in appointments %}
+                <div class="list-group-item mb-3 shadow-sm p-4" style="border-radius: 12px;">
+                    <h5 class="fw-bold mb-1">{{ a.doctor.name }}</h5>
+                    <p class="mb-1 text-muted">{{ a.doctor.speciality }}</p>
+
+                    <p class="mb-0">
+                        <strong>Date:</strong> {{ a.preferred_date }} |
+                        <strong>Time:</strong> {{ a.preferred_time }}
+                    </p>
+
+                    <p class="mb-0 mt-2">
+                        <span class="badge
+                            {% if a.status == 'pending' %}bg-warning text-dark
+                            {% elif a.status == 'confirmed' %}bg-success
+                            {% else %}bg-danger{% endif %}">
+                            {{ a.status|title }}
+                        </span>
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">You have no appointment requests yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

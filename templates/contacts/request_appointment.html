@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5 d-flex justify-content-center">
+    <div class="card shadow p-4" style="max-width: 600px; width: 100%; border-radius: 16px;">
+        
+        <h3 class="fw-bold text-center mb-1">
+            Request Appointment
+        </h3>
+        <p class="text-center text-muted mb-4">
+            with <strong>{{ doctor.name }}</strong>
+        </p>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Full name</label>
+                {{ form.full_name }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Phone</label>
+                {{ form.phone }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Email</label>
+                {{ form.email }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Preferred date</label>
+                {{ form.preferred_date }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Preferred time</label>
+                {{ form.preferred_time }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Message</label>
+                {{ form.message }}
+            </div>
+
+            <button type="submit" class="btn w-100 fw-semibold"
+                    style="background-color:#3ec6aa; color:white;">
+                Submit Request
+            </button>
+        </form>
+
+        <a href="{% url 'contact_detail' doctor.id %}" 
+           class="btn btn-outline-secondary w-100 mt-3">
+            Cancel
+        </a>
+
+    </div>
+</div>
+{% endblock %}

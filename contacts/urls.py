@@ -22,12 +22,15 @@ urlpatterns = [
     # ASSISTANT
     path("assistant/", views.assistant, name="assistant"),
 
-    # AUTH
 
     path("signup/", views.signup, name="signup"),
     path("health-tips/", views.health_tips, name="health_tips"),
     path('favorite-doctor/<int:doctor_id>/', views.toggle_favorite_doctor, name='toggle_favorite_doctor'),
     path('favorite-medicine/<int:med_id>/', views.toggle_favorite_medicine, name='toggle_favorite_medicine'),
     path('favorites/', views.favorites_list, name='favorites_list'),
+    path('doctor/<int:id>/request-appointment/', views.request_appointment, name='request_appointment'),
+    path('appointment-success/', views.appointment_success, name='appointment_success'),
+    path('my-appointments/', views.my_appointments, name='my_appointments'),
+
 
 ]

@@ -9,7 +9,16 @@ GENDER_CHOICES = (
     ("Male", "Male"),
     ("Female", "Female"),
 )
-
+TIME_SLOTS = [
+    ("09:00 AM", "09:00 AM"),
+    ("10:00 AM", "10:00 AM"),
+    ("11:00 AM", "11:00 AM"),
+    ("12:00 PM", "12:00 PM"),
+    ("02:00 PM", "02:00 PM"),
+    ("03:00 PM", "03:00 PM"),
+    ("04:00 PM", "04:00 PM"),
+    ("05:00 PM", "05:00 PM"),
+]
 
 class Contact(models.Model):
     name = models.CharField(max_length=200)
@@ -124,3 +133,22 @@ class FavoriteMedicine(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.medicine}"
+
+class AppointmentRequest(models.Model):
+    doctor = models.ForeignKey('Contact', on_delete=models.CASCADE, related_name='appointments')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='appointments')
+    full_name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=20)
+    email = models.EmailField()
+    preferred_date = models.DateField(null=True, blank=True)
+    preferred_time = models.CharField(max_length=20, choices=TIME_SLOTS, null=True, blank=True)
+    message = models.TextField(blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[('pending', 'Pending'), ('confirmed', 'Confirmed'), ('declined', 'Declined')],
+        default='pending'
+    )
+
+    def __str__(self):
+        return f"{self.full_name} → {self.doctor.name}"

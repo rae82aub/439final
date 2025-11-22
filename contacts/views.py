@@ -12,6 +12,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Contact, Medicine, FavoriteDoctor, FavoriteMedicine
 import random
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Contact, AppointmentRequest
+from .forms import AppointmentRequestForm
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -298,9 +302,31 @@ def signup(request):
 
     return render(request, "signup.html")
 
+def request_appointment(request, id):
+    doctor = get_object_or_404(Contact, id=id)
 
+    if request.method == "POST":
+        form = AppointmentRequestForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.doctor = doctor
+            appointment.user = request.user
+            appointment.save()
+            return redirect('appointment_success')
+
+    else:
+        form = AppointmentRequestForm()
+
+    return render(request, 'contacts/request_appointment.html', {'doctor': doctor, 'form': form})
+def appointment_success(request):
+    return render(request, 'contacts/appointment_success.html')
 def health_tips(request):
     return render(request, "contacts/health_tips.html")
+
+@login_required
+def my_appointments(request):
+    appointments = AppointmentRequest.objects.filter(user=request.user).order_by('-submitted_at')
+    return render(request, 'contacts/my_appointments.html', {'appointments': appointments})
 
 
 @login_required

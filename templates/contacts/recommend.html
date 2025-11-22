@@ -57,21 +57,15 @@
 <div class="row g-4">
     {% for c in results %}
     <div class="col-md-4">
-        <div class="card shadow-sm border-0" style="border-radius:12px; overflow:hidden;">
+    <a href="{% url 'contact_detail' c.id %}?from=recommend" style="text-decoration:none;">
+        <div class="card shadow-sm border-0 hover-card" style="border-radius:12px; overflow:hidden;">
 
             {% if c.profile_photo %}
             <div class="text-center mt-3">
-                {% if c.profile_photo %}
-                    <img src="{{ c.profile_photo.url }}"
-                        class="rounded-circle shadow-sm"
-                        style="width:120px; height:120px; object-fit:cover; border:3px solid #0ca678;">
-                {% else %}
-                    <img src="{% static 'defaults/default_doctor.jpg' %}"
-                        class="rounded-circle shadow-sm"
-                        style="width:120px; height:120px; object-fit:cover; border:3px solid #0ca678;">
-                {% endif %}
+                <img src="{{ c.profile_photo.url }}"
+                    class="rounded-circle shadow-sm"
+                    style="width:120px; height:120px; object-fit:cover; border:3px solid #0ca678;">
             </div>
-
             {% else %}
             <img src="{% static 'defaults/default_doctor.jpg' %}"
                  class="card-img-top"
@@ -79,7 +73,6 @@
             {% endif %}
 
             <div class="card-body">
-
                 <h5 class="fw-bold mb-1">
                     {{ c.name }}
                     {% if c.rating > 4.8 %}
@@ -98,10 +91,10 @@
                 <span class="badge" style="background:#0ca678;">
                     ⭐ {{ c.rating }}
                 </span>
-
             </div>
         </div>
-    </div>
+    </a>
+</div>
     {% endfor %}
 </div>
 

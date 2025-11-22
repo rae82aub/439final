@@ -86,6 +86,12 @@
             <i class="bi bi-heart-fill me-2"></i> My Favorites
         </a>
     </li>
+    <li>
+        <a href="{% url 'my_appointments' %}">
+            <i class="bi bi-calendar-check"></i> My Appointments
+        </a>
+    </li>
+
     {% if request.user.is_authenticated %}
     <hr>
     <h6 class="text-uppercase text-muted small">Recently Viewed</h6>
