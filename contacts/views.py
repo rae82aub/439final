@@ -9,11 +9,34 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import Contact, Medicine, FavoriteDoctor, FavoriteMedicine
+import random
 
 
 
+
+@login_required
 def home(request):
-    return render(request, "home.html")
+    recent_doctors, recent_medicines = get_recent_items(request)
+
+    health_tips = [
+        "Drink at least 6-8 cups of water daily.",
+        "Take a 10-minute walk after meals to improve digestion.",
+        "Sleep 7-9 hours every night for better brain and heart health.",
+        "Wash your hands often - it prevents most infections.",
+        "Eat colorful fruits and vegetables for balanced nutrition.",
+        "Limit screen time before bed to improve sleep quality.",
+        "Schedule annual checkups - prevention matters.",
+    ]
+
+    tip_of_the_day = random.choice(health_tips)
+
+    return render(request, "home.html", {
+        "recent_doctors": recent_doctors,
+        "recent_medicines": recent_medicines,
+        "tip_of_the_day": tip_of_the_day,
+    })
 
 @login_required
 def contact_list(request):
@@ -79,11 +102,26 @@ def recommend(request):
         'cities': cities,
         'results': results,
     })
-
-@login_required   
+@login_required
 def contact_detail(request, id):
     doctor = get_object_or_404(Contact, id=id)
-    return render(request, 'contacts/contact_detail.html', {'doctor': doctor})
+
+    # Recently viewed logic
+    viewed = request.session.get("recent_doctors", [])
+    if id in viewed:
+        viewed.remove(id)
+    viewed.insert(0, id)
+    request.session["recent_doctors"] = viewed[:6]
+    request.session.modified = True
+
+    # ✅ Check if already favorited
+    is_fav = FavoriteDoctor.objects.filter(user=request.user, doctor=doctor).exists()
+
+    return render(request, 'contacts/contact_detail.html', {
+        'doctor': doctor,
+        'is_fav': is_fav,   # ✅ passing to template
+    })
+
 
 @login_required
 def find_medicine(request):
@@ -126,16 +164,26 @@ def medicine_detail(request, id):
     medicine = get_object_or_404(Medicine, id=id)
     stock_entries = PharmacyStock.objects.filter(medicine=medicine)
 
+    is_fav = FavoriteMedicine.objects.filter(user=request.user, medicine=medicine).exists()
+
     return render(request, "contacts/medicine_detail.html", {
         "medicine": medicine,
-        "stock_entries": stock_entries
+        "stock_entries": stock_entries,
+        "is_fav": is_fav,
     })
 
+def get_recent_items(request):
+    recent_doctor_ids = request.session.get("recent_doctors", [])
+    recent_medicine_ids = request.session.get("recent_medicines", [])
+
+    recent_doctors = Contact.objects.filter(id__in=recent_doctor_ids)
+    recent_medicines = Medicine.objects.filter(id__in=recent_medicine_ids)
+
+    return recent_doctors, recent_medicines
 
 
 @login_required
 def extract_medicine_names(text):
-    # Finds capitalized words (Panadol, Brufen, Gaviscon)
     return re.findall(r"[A-Z][a-zA-Z0-9+-]{2,}", text)
 
 @login_required
@@ -173,9 +221,6 @@ def assistant(request):
         ai = model.generate_content(prompt)
         response = ai.text
 
-        # ----------------------------
-        # SPLIT TOP-LEVEL SECTIONS
-        # ----------------------------
         try:
             part1 = response.split("2.")[0]
             part2to3 = response.split("2.")[1]
@@ -185,9 +230,6 @@ def assistant(request):
         except:
             part1, part2, part3 = "", "", ""
 
-        # ----------------------------
-        # CLEAN SECTIONS
-        # ----------------------------
         short_clean = (
             part1.replace("1. Short explanation:", "")
             .replace("1. Short explanation", "")
@@ -206,9 +248,6 @@ def assistant(request):
             .strip()
         )
 
-        # ----------------------------
-        # SPLIT INTO BULLET POINTS
-        # ----------------------------
         short_points = [p.strip() for p in short_clean.split("-") if p.strip()]
         meds_points = [p.strip() for p in meds_clean.split("-") if p.strip()]
         doctor_points = [p.strip() for p in doctor_clean.split("-") if p.strip()]
@@ -260,9 +299,49 @@ def signup(request):
     return render(request, "signup.html")
 
 
+def health_tips(request):
+    return render(request, "contacts/health_tips.html")
 
+
+@login_required
+def toggle_favorite_doctor(request, doctor_id):
+    doctor = get_object_or_404(Contact, id=doctor_id)
+
+    fav, created = FavoriteDoctor.objects.get_or_create(
+        user=request.user,
+        doctor=doctor
+    )
+
+    if not created:
+        fav.delete()
+
+    return redirect('contact_detail', doctor_id)
+
+
+@login_required
+def toggle_favorite_medicine(request, med_id):
+    medicine = get_object_or_404(Medicine, id=med_id)
+
+    fav, created = FavoriteMedicine.objects.get_or_create(
+        user=request.user,
+        medicine=medicine
+    )
+
+    if not created:
+        fav.delete()
+
+    return redirect('medicine_detail', med_id)
+
+@login_required
+def favorites_list(request):
+    fav_doctors = FavoriteDoctor.objects.filter(user=request.user)
+    fav_medicines = FavoriteMedicine.objects.filter(user=request.user)
+
+    return render(request, 'contacts/favorites.html', {
+        'fav_doctors': fav_doctors,
+        'fav_medicines': fav_medicines,
+    })
 
 def logout_view(request):
     logout(request)
     return redirect("login")
-

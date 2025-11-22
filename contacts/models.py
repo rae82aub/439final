@@ -2,6 +2,7 @@ from django.db import models
 import os, random
 from django.conf import settings
 from django.core.files import File
+from django.contrib.auth.models import User
 
 
 GENDER_CHOICES = (
@@ -102,3 +103,24 @@ class PharmacyStock(models.Model):
 
     def __str__(self):
         return f"{self.medicine.name} at {self.pharmacy.name}"
+class FavoriteDoctor(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Contact, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'doctor')
+
+    def __str__(self):
+        return f"{self.user} - {self.doctor}"
+
+
+
+class FavoriteMedicine(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'medicine')
+
+    def __str__(self):
+        return f"{self.user} - {self.medicine}"

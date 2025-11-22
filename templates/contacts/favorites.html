@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">Your Favorites</h2>
+
+    <h4 class="mb-3">Doctors</h4>
+    <ul>
+        {% for item in fav_doctors %}
+            <li>{{ item.doctor.name }}</li>
+        {% empty %}
+            <p>No favorite doctors yet.</p>
+        {% endfor %}
+    </ul>
+
+    <h4 class="mt-5 mb-3">Medicines</h4>
+    <ul>
+        {% for item in fav_medicines %}
+            <li>{{ item.medicine.name }}</li>
+        {% empty %}
+            <p>No favorite medicines yet.</p>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

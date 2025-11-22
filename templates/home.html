@@ -1,57 +1,69 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block content %}
 
-<div class="text-center py-5" style="background: linear-gradient(135deg, #0BA88E, #4FD8C7); border-radius: 15px; color: white;">
-    
-    <i class="bi bi-heart-pulse-fill" style="font-size: 4rem;"></i>
+<div class="container py-5">
 
-    <h1 class="fw-bold mt-3">Find What You Need</h1>
-
-    <p class="lead" style="max-width: 600px; margin: auto;">
-        Choose whether you want to browse doctors or search for medicines.
-    </p>
-
-    <div class="row mt-5 justify-content-center">
-
-        <div class="col-md-3 col-sm-6 mb-4">
-            <a href="{% url 'contact_list' %}" class="text-decoration-none">
-                <div class="card shadow-sm p-4 text-center hover-card">
-                    <i class="bi bi-person-badge-fill text-success" style="font-size: 2.5rem;"></i>
-                    <h5 class="fw-bold mt-3">Find a Doctor</h5>
-                </div>
-            </a>
+    <div class="text-center mb-5">
+        <div class="rounded-circle bg-success bg-opacity-25 d-inline-flex justify-content-center align-items-center"
+             style="width:110px; height:110px;">
+            <i class="bi bi-heart-pulse-fill text-success" style="font-size:48px;"></i>
         </div>
 
-        <div class="col-md-3 col-sm-6 mb-4">
-            <a href="{% url 'find_medicine' %}" class="text-decoration-none">
-                <div class="card shadow-sm p-4 text-center hover-card">
-                    <i class="bi bi-capsule-pill text-success" style="font-size: 2.5rem;"></i>
-                    <h5 class="fw-bold mt-3">Find a Medicine</h5>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-3 col-sm-6 mb-4">
-            <a href="assistant" class="text-decoration-none">
-                <div class="card shadow-sm p-4 text-center hover-card">
-                    <i class="bi bi-robot text-success" style="font-size: 2.5rem;"></i>
-                    <h5 class="fw-bold mt-3">Medicine Assistant</h5>
-                </div>
-            </a>
-        </div>
-
+    <h1 class="fw-bold text-black">
+        Welcome back, {{ request.user.username }}!
+    </h1>        
+    <p class="text-muted">Your trusted space for health, guidance, and care.</p>
     </div>
 
-    <style>
-        .hover-card {
-            transition: 0.2s ease-in-out;
-            border-radius: 15px;
-        }
-        .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-    </style>
+    <div class="d-flex justify-content-center gap-3 flex-wrap mb-5">
+        <a href="{% url 'contact_list' %}" class="btn btn-outline-success rounded-pill px-4">
+            <i class="bi bi-person-badge"></i> Doctors
+        </a>
+        <a href="{% url 'find_medicine' %}" class="btn btn-outline-success rounded-pill px-4">
+            <i class="bi bi-capsule"></i> Medicine
+        </a>
+        <a href="{% url 'assistant' %}" class="btn btn-outline-success rounded-pill px-4">
+            <i class="bi bi-robot"></i> Assistant
+        </a>
+        <a href="{% url 'health_tips' %}" class="btn btn-outline-success rounded-pill px-4">
+            <i class="bi bi-lightbulb"></i> Health Tips
+        </a>
+    </div>
+
+    <div class="alert alert-success text-center shadow-sm rounded-pill fw-semibold py-3 mb-5">
+        💡 Tip of the Day: {{ tip_of_the_day }}
+    </div>
+    {% if recent_doctors %}
+<h3 class="fw-bold mt-5">Recently Viewed Doctors</h3>
+<div class="row mt-3">
+    {% for doc in recent_doctors %}
+    <div class="col-md-4 mb-3">
+        <a href="{% url 'contact_detail' doc.id %}" class="text-decoration-none">
+            <div class="card shadow-sm p-3">
+                <h5 class="fw-semibold">{{ doc.name }}</h5>
+                <p class="text-muted small">{{ doc.speciality }}</p>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if recent_medicines %}
+<h3 class="fw-bold mt-5">Recently Viewed Medicines</h3>
+<div class="row mt-3">
+    {% for med in recent_medicines %}
+    <div class="col-md-4 mb-3">
+        <a href="{% url 'medicine_detail' med.id %}" class="text-decoration-none">
+            <div class="card shadow-sm p-3">
+                <h5 class="fw-semibold">{{ med.name }}</h5>
+                <p class="text-muted small">{{ med.get_category_display }}</p>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 
 </div>
 

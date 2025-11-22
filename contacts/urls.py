@@ -1,7 +1,8 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-
+from .views import toggle_favorite_doctor
+from .views import toggle_favorite_medicine
 urlpatterns = [
     # HOME
     path("", views.home, name="home"),
@@ -24,5 +25,9 @@ urlpatterns = [
     # AUTH
 
     path("signup/", views.signup, name="signup"),
+    path("health-tips/", views.health_tips, name="health_tips"),
+    path('favorite-doctor/<int:doctor_id>/', views.toggle_favorite_doctor, name='toggle_favorite_doctor'),
+    path('favorite-medicine/<int:med_id>/', views.toggle_favorite_medicine, name='toggle_favorite_medicine'),
+    path('favorites/', views.favorites_list, name='favorites_list'),
 
 ]

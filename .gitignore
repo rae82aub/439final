@@ -10,8 +10,6 @@ venv/
 # SQLite database
 db.sqlite3
 
-# Django
-/media/
 
 # VSCode
 .vscode/

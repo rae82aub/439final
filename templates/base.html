@@ -60,8 +60,6 @@
 
       <div class="collapse navbar-collapse justify-content-end" id="medappNav">
           <ul class="navbar-nav ms-auto">
-              <li class="nav-item"><a class="nav-link fw-semibold" href="{% url 'home' %}">Home</a></li>
-
               {% if user.is_authenticated %}
                   <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
               {% else %}
@@ -73,6 +71,47 @@
 </nav>
 {% endif %}
 
+<div class="menu-toggle" onclick="toggleMenu()">
+    <i class="bi bi-list"></i>
+</div>
+
+<div id="sideMenu" class="side-menu">
+    <a href="/"><i class="bi bi-house-door"></i> Home</a>
+    <a href="/list/"><i class="bi bi-person-badge"></i> Find a Doctor</a>
+    <a href="/find_medicine/"><i class="bi bi-capsule"></i> Find a Medicine</a>
+    <a href="/assistant/"><i class="bi bi-robot"></i> Medicine Assistant</a>
+    <a href="/health-tips/"><i class="bi bi-heart-pulse"></i> Daily Health Tips</a>
+    <li class="nav-item">
+        <a href="{% url 'favorites_list' %}" class="nav-link">
+            <i class="bi bi-heart-fill me-2"></i> My Favorites
+        </a>
+    </li>
+    {% if request.user.is_authenticated %}
+    <hr>
+    <h6 class="text-uppercase text-muted small">Recently Viewed</h6>
+
+    <ul class="list-unstyled mt-2">
+        {% for doc in recent_doctors %}
+            <li>
+                <a href="{% url 'contact_detail' doc.id %}">
+                    👨‍⚕️ {{ doc.name }}
+                </a>
+            </li>
+        {% endfor %}
+        {% for med in recent_medicines %}
+            <li>
+                <a href="{% url 'medicine_detail' med.id %}">
+                    💊 {{ med.name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+</div>
+
+
+<div id="overlay" class="overlay" onclick="toggleMenu()"></div>
 
 
 <body class="bg-light">
@@ -82,7 +121,27 @@
 <div class="container">
     {% block content %}
     {% endblock %}
+<script>
+function toggleMenu() {
+    const menu = document.getElementById("sideMenu");
+    const overlay = document.getElementById("overlay");
+
+    if (menu.style.right === "0px") {
+        menu.style.right = "-260px";
+        overlay.style.display = "none";
+    } else {
+        menu.style.right = "0px";
+        overlay.style.display = "block";
+    }
+}
+</script>
+
 </div>
+<footer class="app-footer">
+    <div class="footer-content">
+        <span>© 2025 MedApp. All rights reserved.</span>
+    </div>
+</footer>
 
 </body>
 
