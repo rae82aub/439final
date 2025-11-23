@@ -81,6 +81,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ContactApp.wsgi.application"
 
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
