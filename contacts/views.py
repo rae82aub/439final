@@ -191,78 +191,100 @@ def get_recent_items(request):
 def extract_medicine_names(text):
     return re.findall(r"[A-Z][a-zA-Z0-9+-]{2,}", text)
 
+
 @login_required
 def assistant(request):
     message = ""
-    short_points = []
-    meds_points = []
-    doctor_points = []
+    short = ""
+    meds = ""
+    doctor = ""
     available_medicines = []
-
+    
     if request.method == "POST":
         message = request.POST.get("message", "")
 
         prompt = f"""
-        IMPORTANT: Use this exact format:
+You are an expert medical assistant.
+You MUST always follow this EXACT structure:
 
-        1. Short explanation: <one or two sentences>
+1. Short explanation: <3–5 sentences, normal text>
 
-        2. Recommended OTC medicines:
-        - item
-        - item
-        - item
+2. Recommended OTC medicines:
+- <Brand name + description>
+- <Brand name + description>
+- <Brand name + description>
 
-        3. When to see a doctor:
-        - item
-        - item
-        - item
+3. When to see a doctor:
+- <bullet>
+- <bullet>
+- <bullet>
 
-        Symptoms: {message}
-        """
+RULES:
+- NEVER apologize
+- NEVER refuse
+- NEVER say you cannot help
+- NEVER be short or minimal
+- ALWAYS list well-known Lebanese OTC brands
+- Provide detailed, helpful reasoning in section 1
+- Section 2 MUST include brand names like Panadol, Brufen, Buscopan, Gaviscon, Strepsils, Telfast, Claritin, Otrivin, Efferalgan, Imodium.
+NO bold text.
+NO italics.
+NO stars.
+Symptoms: {message}
+"""
 
         genai.configure(api_key=settings.GEMINI_API_KEY)
         model = genai.GenerativeModel("models/gemini-2.0-flash")
 
         ai = model.generate_content(prompt)
-        response = ai.text
+        text = ai.text
 
+        # split reliably
         try:
-            part1 = response.split("2.")[0]
-            part2to3 = response.split("2.")[1]
-
-            part2 = part2to3.split("3.")[0]
-            part3 = part2to3.split("3.")[1]
+            p1 = text.split("2.")[0]
+            p2_to_3 = text.split("2.")[1]
+            p2 = p2_to_3.split("3.")[0]
+            p3 = p2_to_3.split("3.")[1]
         except:
-            part1, part2, part3 = "", "", ""
+            p1 = p2 = p3 = ""
 
-        short_clean = (
-            part1.replace("1. Short explanation:", "")
+        short = (
+            p1.replace("1. Short explanation:", "")
             .replace("1. Short explanation", "")
             .strip()
         )
 
-        meds_clean = (
-            part2.replace("Recommended OTC medicines:", "")
+        meds = (
+            p2.replace("Recommended OTC medicines:", "")
             .replace("2. Recommended OTC medicines:", "")
             .strip()
         )
 
-        doctor_clean = (
-            part3.replace("When to see a doctor:", "")
+        doctor = (
+            p3.replace("When to see a doctor:", "")
             .replace("3. When to see a doctor:", "")
             .strip()
         )
 
-        short_points = [p.strip() for p in short_clean.split("-") if p.strip()]
-        meds_points = [p.strip() for p in meds_clean.split("-") if p.strip()]
-        doctor_points = [p.strip() for p in doctor_clean.split("-") if p.strip()]
+        # Extract capitalized brand style words
+        names = re.findall(r"[A-Z][a-zA-Z0-9+]{2,}", text)
+        if names:
+            regex = "|".join(names)
+            available_medicines = Medicine.objects.filter(
+                name__iregex=regex
+            )
+
 
     return render(request, "contacts/assistant.html", {
-        "short_points": short_points,
-        "meds_points": meds_points,
-        "doctor_points": doctor_points,
+        "short": short,
+        "meds": meds,
+        "doctor": doctor,
         "message": message,
+        "available_medicines": available_medicines,
     })
+
+
+
 
 def login_view(request):
     if request.method == "POST":

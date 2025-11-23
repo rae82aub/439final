@@ -1,0 +1,24 @@
+name,description,manufacturer,price,category
+Panadol,Pain relief tablet,GSK,3.5,painkiller
+Panadol Extra,Stronger pain relief,GSK,4.2,painkiller
+Advil,Ibuprofen pain reliever,Pfizer,5.0,painkiller
+Acamol,Paracetamol pain reliever,Teva,2.5,painkiller
+Augmentin,Broad-spectrum antibiotic,GSK,12.0,antibiotic
+Cipro,Antibiotic for infections,Bayer,10.0,antibiotic
+Zithromax,Azithromycin antibiotic,Pfizer,14.0,antibiotic
+Claritin,Allergy relief,Bayer,8.0,allergy
+Zyrtec,Allergy relief tablet,Johnson&Johnson,7.5,allergy
+Panadol Cold & Flu,Cold relief,GSK,4.0,cold_flu
+Actifed,Cold & flu medicine,Johnson&Johnson,4.5,cold_flu
+Otrivin,Nasal decongestant,GSK,6.0,cold_flu
+Gaviscon,Heartburn & acidity relief,RB,5.0,digestive
+Buscopan,Stomach cramps relief,Boehringer,6.5,digestive
+Nexium,Acid reflux treatment,AstraZeneca,8.0,digestive
+Vitamin C,Immune support capsule,NatureMade,3.0,vitamin
+Vitamin D,Vitamin D supplement,Solaray,4.0,vitamin
+Centrum,Multivitamin,PFZ,10.0,vitamin
+Aspirin Heart,Low-dose heart aspirin,Bayer,5.0,heart
+Concor,Heart/blood pressure medication,Merck,12.0,heart
+Bepanthen,Skin healing cream,Bayer,7.0,skin
+Betadine,Antiseptic solution,Mundipharma,5.5,skin
+Fucidin,Topical antibiotic,Leo Pharma,8.0,skin

@@ -2,7 +2,6 @@
 {% block content %}
 
 <div class="container py-5">
-    
 
     <h1 class="fw-bold text-center mb-4">
         Medicine Assistant
@@ -16,16 +15,15 @@
         <button class="btn btn-success mt-3 w-100">Ask</button>
     </form>
 
-   {% if short_points or meds_points or doctor_points %}
+
+{% if short or meds or doctor %}
 <div class="row mt-4">
 
     <!-- Short Explanation -->
     <div class="col-md-12 mb-3">
         <div class="card shadow-sm border-0 p-4">
             <h4 class="fw-bold text-success mb-3">Short Explanation</h4>
-            {% for point in short_points %}
-                <div class="p-2 mb-2 bg-light border rounded">{{ point }}</div>
-            {% endfor %}
+            <div class="p-2 mb-2 bg-light border rounded">{{ short }}</div>
         </div>
     </div>
 
@@ -33,8 +31,11 @@
     <div class="col-md-12 mb-3">
         <div class="card shadow-sm border-0 p-4">
             <h4 class="fw-bold text-primary mb-3">Recommended Medicines</h4>
-            {% for point in meds_points %}
-                <div class="p-2 mb-2 bg-light border rounded">{{ point }}</div>
+
+            {% for line in meds.splitlines %}
+                {% if line %}
+                <div class="p-2 mb-2 bg-light border rounded">{{ line }}</div>
+                {% endif %}
             {% endfor %}
 
             {% if available_medicines %}
@@ -57,8 +58,11 @@
     <div class="col-md-12">
         <div class="card shadow-sm border-0 p-4">
             <h4 class="fw-bold text-danger mb-3">When to See a Doctor</h4>
-            {% for point in doctor_points %}
-                <div class="p-2 mb-2 bg-light border rounded">{{ point }}</div>
+
+            {% for line in doctor.splitlines %}
+                {% if line %}
+                    <div class="p-2 mb-2 bg-light border rounded">{{ line }}</div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
@@ -66,11 +70,10 @@
 </div>
 {% endif %}
 
-
-
     <p class="text-muted small text-center mt-4">
-        ⚠️ This tool is for informational purposes only and does not replace professional medical advice.
+        ⚠ This tool is for informational purposes only and does not replace professional medical advice.
     </p>
+
 </div>
 
 {% endblock %}
