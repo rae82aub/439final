@@ -16,6 +16,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Contact, AppointmentRequest
 from .forms import AppointmentRequestForm
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 
 
@@ -219,7 +220,7 @@ def assistant(request):
         Symptoms: {message}
         """
 
-        genai.configure(api_key="AIzaSyDybJxbjtGEbYSh7QTf9yvY0laSRY9bPNw")
+        genai.configure(api_key=settings.GEMINI_API_KEY)
         model = genai.GenerativeModel("models/gemini-2.0-flash")
 
         ai = model.generate_content(prompt)
