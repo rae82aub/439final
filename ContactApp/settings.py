@@ -31,7 +31,8 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "medapp-web-auayf9gnhbdgemh7.francecentral-01.azurewebsites.net"
-]STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 
 # Application definition
