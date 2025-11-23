@@ -34,6 +34,9 @@ ALLOWED_HOSTS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://medapp-web-auayf9gnhbdgemh7.francecentral-01.azurewebsites.net",
+]
 
 # Application definition
 
